@@ -19,18 +19,21 @@ interface FetchNotesParams {
   page: number;
   perPage: number;
   searchText?: string;
+  tag?: string;
 }
 
 export const fetchNotes = async ({
   page,
   perPage,
   searchText,
+  tag,
 }: FetchNotesParams): Promise<FetchNotesResponse> => {
   const res = await noteApi.get<FetchNotesResponse>("/notes", {
     params: {
       page,
       perPage,
       search: searchText,
+      ...(tag && tag !== "all" ? { tag } : {}),
     },
   });
 
