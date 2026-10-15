@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation";
+import { isAxiosError } from "axios";
 import {
   dehydrate,
   HydrationBoundary,
@@ -14,10 +16,15 @@ export default async function NotePreview({ params }: NotePreviewProps) {
   const { id } = await params;
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: ["note", id],
-    queryFn: () => fetchNoteById(id),
-  });
+  try {
+    await queryClient.fetchQuery({
+      queryKey: ["note", id],
+      queryFn: () => fetchNoteById(id),
+    });
+  } catch (error) {
+    if (isAxiosError(error) && error.response?.status === 404) notFound();
+    throw error;
+  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
