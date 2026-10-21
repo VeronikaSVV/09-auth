@@ -32,20 +32,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-  modal,
-}: {
+type RootLayoutProps = {
   children: ReactNode;
   modal: ReactNode;
-}) {
+};
+
+export default function RootLayout(props: unknown) {
+  const { children, modal } = props as RootLayoutProps;
   return (
     <html lang="en">
       <body className={roboto.variable}>
         <TanStackProvider>
           <AuthProvider>
             <Header />
-            <div id="modal-root" />
             {children}
             {modal}
             <Footer />

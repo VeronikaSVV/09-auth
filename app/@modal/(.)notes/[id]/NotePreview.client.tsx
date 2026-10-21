@@ -31,6 +31,9 @@ export default function NotePreviewClient() {
             <div className={css.item}>
               <div className={css.header}>
                 <h2>{note.title}</h2>
+                <button type="button" onClick={() => router.back()}>
+                  Close
+                </button>
               </div>
               <p className={css.tag}>{note.tag}</p>
               <p className={css.content}>{note.content}</p>
