@@ -4,8 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 
 import Modal from "@/components/Modal/Modal";
-import { fetchNoteById } from "@/lib/api";
-import css from "@/app/notes/[id]/NoteDetails.module.css";
+import { fetchNoteById } from "@/lib/api/clientApi";
+import css from "@/app/(private routes)/notes/[id]/NoteDetails.module.css";
 
 export default function NotePreviewClient() {
   const { id } = useParams<{ id: string }>();

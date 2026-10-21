@@ -16,6 +16,7 @@
 }
 
 .button {
+  display: inline-block;
   padding: 6px 12px;
   font-size: 16px;
   color: #fff;
@@ -23,6 +24,8 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
   transition: background-color 0.2s ease;
 }
 
