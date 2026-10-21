@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { parseSetCookie } from "cookie";
+import { cookies } from "next/headers";
 import { checkSession } from "@/lib/api/serverApi";
 
 const privateRoutes = ["/profile", "/notes"];
@@ -17,8 +18,19 @@ export async function proxy(request: NextRequest) {
   const isPublicRoute = isRoute(pathname, publicRoutes);
   if (!isPrivateRoute && !isPublicRoute) return NextResponse.next();
 
-  const accessToken = request.cookies.get("accessToken")?.value;
-  const refreshToken = request.cookies.get("refreshToken")?.value;
+  let cookieStore: Awaited<ReturnType<typeof cookies>> | undefined;
+  try {
+    cookieStore = await cookies();
+  } catch {
+    // Proxy runtimes without a request cookie context use NextRequest cookies below.
+  }
+
+  const accessToken =
+    cookieStore?.get("accessToken")?.value ??
+    request.cookies.get("accessToken")?.value;
+  const refreshToken =
+    cookieStore?.get("refreshToken")?.value ??
+    request.cookies.get("refreshToken")?.value;
   let sessionResponse;
   try {
     if (accessToken || refreshToken) {
@@ -40,6 +52,11 @@ export async function proxy(request: NextRequest) {
     for (const cookie of cookies) {
       const parsed = parseSetCookie(cookie);
       if (parsed.value) {
+        try {
+          cookieStore?.set(parsed.name, parsed.value, parsed);
+        } catch {
+          // In Proxy, use the response cookie API when the request store is read-only.
+        }
         response.cookies.set(parsed.name, parsed.value, parsed);
       }
     }
